@@ -1,12 +1,13 @@
-const categories = {
+const defaultCategories = {
     Locations: ['Beach', 'Hospital', 'School', 'Restaurant', 'Airport', 'Library', 'Gym', 'Park'],
     Objects: ['Umbrella', 'Laptop', 'Guitar', 'Camera', 'Bicycle', 'Watch', 'Backpack', 'Sunglasses'],
     Animals: ['Elephant', 'Dolphin', 'Eagle', 'Tiger', 'Penguin', 'Giraffe', 'Butterfly', 'Kangaroo'],
     Food: ['Pizza', 'Sushi', 'Burger', 'Pasta', 'Tacos', 'Ice Cream', 'Salad', 'Sandwich'],
     Professions: ['Doctor', 'Teacher', 'Chef', 'Pilot', 'Artist', 'Engineer', 'Musician', 'Athlete'],
     Numbers: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
-    
 };
+
+let categories = { ...defaultCategories };
 
 let gameState = {
     players: [],
@@ -21,19 +22,27 @@ let gameState = {
 };
 
 const setupScreen = document.getElementById('setupScreen');
+const categorySelectionScreen = document.getElementById('categorySelectionScreen');
 const gameplayScreen = document.getElementById('gameplayScreen');
 const playerNameInput = document.getElementById('playerNameInput');
 const addPlayerBtn = document.getElementById('addPlayerBtn');
 const playerList = document.getElementById('playerList');
-const categorySelect = document.getElementById('categorySelect');
-const customCategorySection = document.getElementById('customCategorySection');
-const customCategoryName = document.getElementById('customCategoryName');
-const customWordsList = document.getElementById('customWordsList');
+const currentCategoryBtn = document.getElementById('currentCategoryBtn');
+const currentCategoryLabel = document.getElementById('currentCategoryLabel');
+const categoryGrid = document.getElementById('categoryGrid');
+const categoryBackBtn = document.getElementById('categoryBackBtn');
+const showCreateCategoryBtn = document.getElementById('showCreateCategoryBtn');
+const categoryCreateForm = document.getElementById('categoryCreateForm');
+const newCategoryName = document.getElementById('newCategoryName');
+const newCategoryWords = document.getElementById('newCategoryWords');
+const saveNewCategoryBtn = document.getElementById('saveNewCategoryBtn');
+const cancelNewCategoryBtn = document.getElementById('cancelNewCategoryBtn');
 const imposterFirstToggle = document.getElementById('imposterFirstToggle');
 const startGameBtn = document.getElementById('startGameBtn');
 const categoryDisplay = document.getElementById('categoryDisplay');
 const playerButtons = document.getElementById('playerButtons');
 const resetGameBtn = document.getElementById('resetGameBtn');
+const playAgainBtn = document.getElementById('playAgainBtn');
 const revealModal = document.getElementById('revealModal');
 const modalCategory = document.getElementById('modalCategory');
 const modalWord = document.getElementById('modalWord');
@@ -41,6 +50,97 @@ const closeModalBtn = document.getElementById('closeModalBtn');
 const startPlayerModal = document.getElementById('startPlayerModal');
 const startPlayerAnnouncement = document.getElementById('startPlayerAnnouncement');
 const closeStartPlayerBtn = document.getElementById('closeStartPlayerBtn');
+
+function loadCustomCategories() {
+    const saved = localStorage.getItem('customCategories');
+    if (saved) {
+        try {
+            const customCats = JSON.parse(saved);
+            Object.keys(customCats).forEach(catName => {
+                categories[catName] = customCats[catName];
+            });
+        } catch (e) {
+            console.error('Error loading custom categories:', e);
+        }
+    }
+}
+
+function saveCustomCategory(name, words) {
+    const saved = localStorage.getItem('customCategories');
+    let customCats = {};
+
+    if (saved) {
+        try {
+            customCats = JSON.parse(saved);
+        } catch (e) {
+            console.error('Error parsing saved categories:', e);
+        }
+    }
+
+    customCats[name] = words;
+    localStorage.setItem('customCategories', JSON.stringify(customCats));
+
+    categories[name] = words;
+}
+
+function getSelectedCategoryLabel() {
+    if (gameState.selectedCategory === 'random') return 'Random';
+    return gameState.selectedCategory;
+}
+
+function syncCurrentCategoryLabel() {
+    currentCategoryLabel.textContent = getSelectedCategoryLabel();
+}
+
+function showCategoryScreen() {
+    categoryCreateForm.style.display = 'none';
+    newCategoryName.value = '';
+    newCategoryWords.value = '';
+
+    setupScreen.classList.remove('active');
+    gameplayScreen.classList.remove('active');
+    categorySelectionScreen.classList.add('active');
+
+    renderCategoryGrid();
+}
+
+function showSetupScreen() {
+    categorySelectionScreen.classList.remove('active');
+    gameplayScreen.classList.remove('active');
+    setupScreen.classList.add('active');
+}
+
+function setSelectedCategory(categoryName) {
+    gameState.selectedCategory = categoryName;
+    syncCurrentCategoryLabel();
+}
+
+function getCustomCategoryNames() {
+    return Object.keys(categories).filter(cat => !defaultCategories.hasOwnProperty(cat));
+}
+
+function renderCategoryGrid() {
+    const defaultNames = Object.keys(defaultCategories);
+    const customNames = getCustomCategoryNames();
+
+    const all = ['random', ...defaultNames, ...customNames];
+
+    categoryGrid.innerHTML = all.map((cat) => {
+        const isCustom = cat !== 'random' && !defaultCategories.hasOwnProperty(cat);
+        const label = cat === 'random' ? 'Random' : cat;
+        const selected = cat === gameState.selectedCategory ? ' selected' : '';
+        const customClass = isCustom ? ' custom' : '';
+        return `<button class="category-btn${customClass}${selected}" data-category="${cat}">${label}</button>`;
+    }).join('');
+
+    categoryGrid.querySelectorAll('[data-category]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const chosen = btn.getAttribute('data-category');
+            setSelectedCategory(chosen);
+            showSetupScreen();
+        });
+    });
+}
 
 function updatePlayerList() {
     if (gameState.players.length === 0) {
@@ -83,32 +183,7 @@ function startGame() {
         return;
     }
 
-    gameState.selectedCategory = categorySelect.value;
-    
-    if (gameState.selectedCategory === 'custom') {
-        const customName = customCategoryName.value.trim();
-        const customWords = customWordsList.value.trim();
-        
-        if (!customName || !customWords) {
-            alert('Please fill in both the category name and words list for your custom category!');
-            return;
-        }
-        
-        const wordsArray = customWords.split(',').map(word => word.trim()).filter(word => word.length > 0);
-        
-        if (wordsArray.length < 3) {
-            alert('Please provide at least 3 words for your custom category!');
-            return;
-        }
-        
-        gameState.customCategory = {
-            name: customName,
-            words: wordsArray
-        };
-        
-        gameState.category = customName;
-        gameState.word = getRandomItem(wordsArray);
-    } else if (gameState.selectedCategory === 'random') {
+    if (gameState.selectedCategory === 'random') {
         const categoryNames = Object.keys(categories);
         gameState.category = getRandomItem(categoryNames);
         gameState.word = getRandomItem(categories[gameState.category]);
@@ -118,21 +193,21 @@ function startGame() {
     }
 
     gameState.allowImposterFirst = imposterFirstToggle.checked;
-    
+
     gameState.imposter = getRandomItem(gameState.players);
-    
-    const eligiblePlayers = gameState.allowImposterFirst 
-        ? gameState.players 
+
+    const eligiblePlayers = gameState.allowImposterFirst
+        ? gameState.players
         : gameState.players.filter(p => p !== gameState.imposter);
     gameState.firstPlayer = getRandomItem(eligiblePlayers);
-    
+
     gameState.revealedPlayers.clear();
-    
+
     setupScreen.classList.remove('active');
     gameplayScreen.classList.add('active');
-    
+
     categoryDisplay.textContent = `Category: ${gameState.category}`;
-    
+
     renderPlayerButtons();
 }
 
@@ -146,9 +221,9 @@ function renderPlayerButtons() {
 
 function revealRole(playerName) {
     const isImposter = playerName === gameState.imposter;
-    
+
     modalCategory.textContent = gameState.category;
-    
+
     if (isImposter) {
         modalWord.textContent = 'YOU ARE THE IMPOSTER';
         modalWord.classList.add('imposter');
@@ -156,19 +231,19 @@ function revealRole(playerName) {
         modalWord.textContent = gameState.word;
         modalWord.classList.remove('imposter');
     }
-    
+
     revealModal.classList.add('active');
-    
+
     closeModalBtn.onclick = () => {
         revealModal.classList.remove('active');
-        
+
         gameState.revealedPlayers.add(playerName);
-        
+
         const playerBtn = document.querySelector(`[data-player="${playerName}"]`);
         if (playerBtn) {
             playerBtn.disabled = true;
         }
-        
+
         if (gameState.revealedPlayers.size === gameState.players.length) {
             setTimeout(() => {
                 announceFirstPlayer();
@@ -185,6 +260,20 @@ function announceFirstPlayer() {
     startPlayerModal.classList.add('active');
 }
 
+function softReset() {
+    gameState.imposter = null;
+    gameState.category = null;
+    gameState.word = null;
+    gameState.revealedPlayers.clear();
+    gameState.firstPlayer = null;
+    gameState.customCategory = null;
+
+    startPlayerModal.classList.remove('active');
+    gameplayScreen.classList.remove('active');
+    categorySelectionScreen.classList.remove('active');
+    setupScreen.classList.add('active');
+}
+
 function resetGame() {
     gameState = {
         players: [],
@@ -197,17 +286,18 @@ function resetGame() {
         selectedCategory: 'random',
         customCategory: null
     };
-    
+
     playerNameInput.value = '';
-    categorySelect.value = 'random';
-    customCategoryName.value = '';
-    customWordsList.value = '';
-    customCategorySection.style.display = 'none';
+    categoryCreateForm.style.display = 'none';
+    newCategoryName.value = '';
+    newCategoryWords.value = '';
     imposterFirstToggle.checked = false;
-    
+
     gameplayScreen.classList.remove('active');
+    categorySelectionScreen.classList.remove('active');
     setupScreen.classList.add('active');
-    
+
+    syncCurrentCategoryLabel();
     updatePlayerList();
 }
 
@@ -227,12 +317,57 @@ closeStartPlayerBtn.addEventListener('click', () => {
     startPlayerModal.classList.remove('active');
 });
 
-categorySelect.addEventListener('change', (e) => {
-    if (e.target.value === 'custom') {
-        customCategorySection.style.display = 'block';
-    } else {
-        customCategorySection.style.display = 'none';
-    }
+playAgainBtn.addEventListener('click', softReset);
+
+currentCategoryBtn.addEventListener('click', showCategoryScreen);
+
+categoryBackBtn.addEventListener('click', () => {
+    showSetupScreen();
 });
 
+showCreateCategoryBtn.addEventListener('click', () => {
+    categoryCreateForm.style.display = categoryCreateForm.style.display === 'none' ? 'block' : 'none';
+});
+
+cancelNewCategoryBtn.addEventListener('click', () => {
+    categoryCreateForm.style.display = 'none';
+    newCategoryName.value = '';
+    newCategoryWords.value = '';
+});
+
+saveNewCategoryBtn.addEventListener('click', () => {
+    const name = newCategoryName.value.trim();
+    const wordsRaw = newCategoryWords.value.trim();
+
+    if (!name || !wordsRaw) {
+        alert('Please fill in both the category name and words list for your custom category!');
+        return;
+    }
+
+    if (name.toLowerCase() === 'random') {
+        alert('Category name cannot be "Random".');
+        return;
+    }
+
+    if (defaultCategories.hasOwnProperty(name)) {
+        alert('That category name already exists as a default category. Please choose another name.');
+        return;
+    }
+
+    const wordsArray = wordsRaw.split(',').map(w => w.trim()).filter(w => w.length > 0);
+    if (wordsArray.length < 3) {
+        alert('Please provide at least 3 words for your custom category!');
+        return;
+    }
+
+    saveCustomCategory(name, wordsArray);
+    newCategoryName.value = '';
+    newCategoryWords.value = '';
+    categoryCreateForm.style.display = 'none';
+
+    renderCategoryGrid();
+});
+
+loadCustomCategories();
+syncCurrentCategoryLabel();
 updatePlayerList();

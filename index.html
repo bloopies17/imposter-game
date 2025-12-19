@@ -19,24 +19,9 @@
             
             <div id="playerList" class="player-list"></div>
             
-            <div class="category-section">
-                <label for="categorySelect" class="section-label">Choose Category</label>
-                <select id="categorySelect" class="category-select">
-                    <option value="random">Random (Default)</option>
-                    <option value="Locations">Locations</option>
-                    <option value="Objects">Objects</option>
-                    <option value="Animals">Animals</option>
-                    <option value="Food">Food</option>
-                    <option value="Professions">Professions</option>
-                    <option value="custom">Custom Category</option>
-                </select>
-            </div>
-            
-            <div id="customCategorySection" class="custom-category-section" style="display: none;">
-                <h3 class="section-title">Create Your Own Category</h3>
-                <input type="text" id="customCategoryName" class="custom-input" placeholder="Category Name (e.g., Inside Jokes)" />
-                <textarea id="customWordsList" class="custom-textarea" placeholder="Enter words separated by commas (e.g., Kevin's House, The Old Mall, That One Party)" rows="4"></textarea>
-            </div>
+            <button id="currentCategoryBtn" class="btn btn-primary btn-category">
+                Current Category: <span id="currentCategoryLabel">Random</span>
+            </button>
             
             <div class="toggle-section">
                 <label class="toggle-label">
@@ -49,6 +34,31 @@
             </div>
             
             <button id="startGameBtn" class="btn btn-success">Start Game</button>
+        </div>
+
+        <div id="categorySelectionScreen" class="screen">
+            <h2 class="category-title">Choose Category</h2>
+            <p class="subtitle">Tap a category to select it</p>
+
+            <div id="categoryGrid" class="category-grid"></div>
+
+            <div class="category-actions">
+                <button id="categoryBackBtn" class="btn btn-secondary">Back</button>
+            </div>
+
+            <div class="category-create">
+                <button id="showCreateCategoryBtn" class="btn btn-success">Create New +</button>
+
+                <div id="categoryCreateForm" class="custom-category-section" style="display: none;">
+                    <h3 class="section-title">Create Your Own Category</h3>
+                    <input type="text" id="newCategoryName" class="custom-input" placeholder="Category Name (e.g., Inside Jokes)" />
+                    <textarea id="newCategoryWords" class="custom-textarea" placeholder="Enter words separated by commas (e.g., Kevin's House, The Old Mall, That One Party)" rows="4"></textarea>
+                    <div class="form-actions">
+                        <button id="saveNewCategoryBtn" class="btn btn-primary">Save Category</button>
+                        <button id="cancelNewCategoryBtn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="gameplayScreen" class="screen">
@@ -72,6 +82,7 @@
         <div class="modal-content">
             <div class="modal-announcement" id="startPlayerAnnouncement"></div>
             <button id="closeStartPlayerBtn" class="btn btn-success">Let's Play!</button>
+            <button id="playAgainBtn" class="btn btn-primary" style="margin-top: 15px;">Play Again</button>
         </div>
     </div>
 
