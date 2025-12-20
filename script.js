@@ -4,7 +4,8 @@ const defaultCategories = {
     Animals: ['Elephant', 'Dolphin', 'Eagle', 'Tiger', 'Penguin', 'Giraffe', 'Butterfly', 'Kangaroo'],
     Food: ['Pizza', 'Sushi', 'Burger', 'Pasta', 'Tacos', 'Ice Cream', 'Salad', 'Sandwich'],
     Professions: ['Doctor', 'Teacher', 'Chef', 'Pilot', 'Artist', 'Engineer', 'Musician', 'Athlete'],
-    Numbers: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+    Numbers: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+    ClashCards: [ 'Archer Queen', 'Archers', 'Arrows', 'Baby Dragon', 'Balloon', 'Bandit', 'Barbarian Barrel', 'Barbarian Hut', 'Barbarians', 'Bats', 'Battle Healer', 'Battle Ram', 'Bomber', 'Bomb Tower', 'Bowler', 'Cannon', 'Cannon Cart', 'Champions', 'Clone', 'Dark Prince', 'Dart Goblin', 'Delivery', 'Earthquake', 'Electro Dragon', 'Electro Giant', 'Electro Spirit', 'Electro Wizard', 'Elite Barbarians', 'Elixir Collector', 'Elixir Golem', 'Executioner', 'Fire Spirit', 'Fireball', 'Fisherman', 'Flying Machine', 'Freeze', 'Giant', 'Giant Skeleton', 'Giant Snowball', 'Goblin Barrel', 'Goblin Cage', 'Goblin Drill', 'Goblin Gang', 'Goblin Giant', 'Goblin Hut', 'Goblins', 'Golden Knight', 'Golem', 'Graveyard', 'Guards', 'Heal Spirit', 'Hunter', 'Ice Golem', 'Ice Spirit', 'Ice Wizard', 'Inferno Dragon', 'Inferno Tower', 'Knight', 'Lava Hound', 'Lightning', 'Little Prince', 'Lumberjack', 'Magic Archer', 'Mega Knight', 'Mega Minion', 'Mighty Miner', 'Minion Horde', 'Minions', 'Mini P.E.K.K.A.', 'Mirror', 'Monk', 'Mortar', 'Mother Witch', 'Night Witch', 'P.E.K.K.A.', 'Poison', 'Prince', 'Princess', 'Ram Rider', 'Rage', 'Rascals', 'Rocket', 'Royal Delivery', 'Royal Ghost', 'Royal Giant', 'Royal Hogs', 'Royal Recruits', 'Skeleton Army', 'Skeleton Barrel', 'Skeleton King', 'Skeletons', 'Sparky', 'Spear Goblins', 'Tesla', 'The Log', 'Three Musketeers', 'Tombstone', 'Tornado', 'Valkyrie', 'Wall Breakers', 'Witch', 'Wizard', 'Zappies' ]
 };
 
 let categories = { ...defaultCategories };
