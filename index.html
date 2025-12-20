@@ -24,6 +24,11 @@
             
             <div id="playerList" class="player-list"></div>
             
+            <div class="action-buttons" style="margin: 15px 0; display: flex; gap: 10px;">
+                <button id="clearNamesBtn" class="btn btn-secondary" style="flex: 1;">Clear Names</button>
+                <button id="resetAllBtn" class="btn btn-secondary" style="flex: 1;">Reset All</button>
+            </div>
+            
             <button id="currentCategoryBtn" class="btn btn-primary btn-category">
                 Current Category: <span id="currentCategoryLabel">Random</span>
             </button>
@@ -71,7 +76,9 @@
             
             <div id="playerButtons" class="player-buttons"></div>
             
-            <button id="resetGameBtn" class="btn btn-secondary">New Game</button>
+            <div class="game-actions" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                <button id="cancelGameBtn" class="btn btn-danger">Cancel Game</button>
+            </div>
         </div>
     </div>
 

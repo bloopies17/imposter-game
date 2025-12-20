@@ -41,13 +41,15 @@ const imposterFirstToggle = document.getElementById('imposterFirstToggle');
 const startGameBtn = document.getElementById('startGameBtn');
 const categoryDisplay = document.getElementById('categoryDisplay');
 const playerButtons = document.getElementById('playerButtons');
-const resetGameBtn = document.getElementById('resetGameBtn');
 const playAgainBtn = document.getElementById('playAgainBtn');
 const revealModal = document.getElementById('revealModal');
 const modalCategory = document.getElementById('modalCategory');
 const modalWord = document.getElementById('modalWord');
 const closeModalBtn = document.getElementById('closeModalBtn');
 const startPlayerModal = document.getElementById('startPlayerModal');
+const clearNamesBtn = document.getElementById('clearNamesBtn');
+const resetAllBtn = document.getElementById('resetAllBtn');
+const cancelGameBtn = document.getElementById('cancelGameBtn');
 const startPlayerAnnouncement = document.getElementById('startPlayerAnnouncement');
 const closeStartPlayerBtn = document.getElementById('closeStartPlayerBtn');
 
@@ -260,6 +262,46 @@ function announceFirstPlayer() {
     startPlayerModal.classList.add('active');
 }
 
+function clearPlayerNames() {
+    gameState.players = [];
+    updatePlayerList();
+}
+
+function resetAll() {
+    // Clear player names
+    clearPlayerNames();
+    
+    // Reset category to default
+    gameState.selectedCategory = 'random';
+    gameState.customCategory = null;
+    syncCurrentCategoryLabel();
+    
+    // Reset other UI elements
+    playerNameInput.value = '';
+    imposterFirstToggle.checked = false;
+    gameState.allowImposterFirst = false;
+}
+
+function cancelGame() {
+    // Just return to setup screen without clearing anything
+    showSetupScreen();
+}
+
+function resetGame() {
+    // Keep the current players and settings, just reset the game state
+    gameState.imposter = null;
+    gameState.category = null;
+    gameState.word = null;
+    gameState.revealedPlayers.clear();
+    gameState.firstPlayer = null;
+    
+    // Clear the player buttons
+    playerButtons.innerHTML = '';
+    
+    // Show setup screen and hide others
+    showSetupScreen();
+}
+
 function softReset() {
     gameState.imposter = null;
     gameState.category = null;
@@ -274,34 +316,11 @@ function softReset() {
     setupScreen.classList.add('active');
 }
 
-function resetGame() {
-    gameState = {
-        players: [],
-        imposter: null,
-        category: null,
-        word: null,
-        allowImposterFirst: false,
-        revealedPlayers: new Set(),
-        firstPlayer: null,
-        selectedCategory: 'random',
-        customCategory: null
-    };
-
-    playerNameInput.value = '';
-    categoryCreateForm.style.display = 'none';
-    newCategoryName.value = '';
-    newCategoryWords.value = '';
-    imposterFirstToggle.checked = false;
-
-    gameplayScreen.classList.remove('active');
-    categorySelectionScreen.classList.remove('active');
-    setupScreen.classList.add('active');
-
-    syncCurrentCategoryLabel();
-    updatePlayerList();
-}
-
+// Add event listeners
 addPlayerBtn.addEventListener('click', addPlayer);
+clearNamesBtn.addEventListener('click', clearPlayerNames);
+resetAllBtn.addEventListener('click', resetAll);
+cancelGameBtn.addEventListener('click', cancelGame);
 
 playerNameInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
