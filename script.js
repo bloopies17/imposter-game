@@ -530,3 +530,45 @@ cancelCategoryEditorBtn.addEventListener('click', () => {
 loadCustomCategories();
 syncCurrentCategoryLabel();
 updatePlayerList();
+
+// Mobile keyboard handling using Visual Viewport API
+if (window.visualViewport) {
+    const handleViewportChange = () => {
+        const viewport = window.visualViewport;
+        const viewportHeight = viewport.height;
+        const visualViewportHeight = viewport.height;
+        const keyboardHeight = window.innerHeight - visualViewportHeight;
+        
+        const container = document.querySelector('.container');
+        
+        if (keyboardHeight > 150) { // Keyboard is likely open
+            // Adjust container padding to account for keyboard
+            container.style.paddingBottom = `${keyboardHeight + 20}px`;
+            
+            // Add class to body for keyboard-active state
+            document.body.classList.add('keyboard-active');
+        } else {
+            // Reset padding when keyboard is closed
+            container.style.paddingBottom = '20px';
+            document.body.classList.remove('keyboard-active');
+        }
+    };
+    
+    window.visualViewport.addEventListener('resize', handleViewportChange);
+    window.visualViewport.addEventListener('scroll', handleViewportChange);
+}
+
+// iOS Safari specific fixes
+if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+    document.addEventListener('focusin', (e) => {
+        if (e.target.matches('input, textarea')) {
+            document.body.classList.add('keyboard-active');
+        }
+    });
+    
+    document.addEventListener('focusout', (e) => {
+        if (e.target.matches('input, textarea')) {
+            document.body.classList.remove('keyboard-active');
+        }
+    });
+}
