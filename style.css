@@ -539,6 +539,25 @@ input:checked + .slider:before {
     background-color: #fff;
 }
 
+.toggle-danger .slider {
+    background-color: #e94560;
+}
+
+.toggle-danger input:checked + .slider {
+    background-color: #e94560;
+}
+
+.warning-message {
+    color: #e94560;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    text-align: right;
+}
+
+.warning-message.hidden {
+    display: none;
+}
+
 .player-buttons {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));

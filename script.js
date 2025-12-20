@@ -11,10 +11,11 @@ let categories = { ...defaultCategories };
 
 let gameState = {
     players: [],
-    imposter: null,
+    imposters: [],
     category: null,
     word: null,
     allowImposterFirst: false,
+    twoImposters: false,
     revealedPlayers: new Set(),
     firstPlayer: null,
     selectedCategory: 'random',
@@ -39,6 +40,8 @@ const categoryEditorMessage = document.getElementById('categoryEditorMessage');
 const saveAndUseCategoryBtn = document.getElementById('saveAndUseCategoryBtn');
 const cancelCategoryEditorBtn = document.getElementById('cancelCategoryEditorBtn');
 const imposterFirstToggle = document.getElementById('imposterFirstToggle');
+const twoImpostersToggle = document.getElementById('twoImpostersToggle');
+const twoImpostersWarning = document.getElementById('twoImpostersWarning');
 const startGameBtn = document.getElementById('startGameBtn');
 const categoryDisplay = document.getElementById('categoryDisplay');
 const playerButtons = document.getElementById('playerButtons');
@@ -175,7 +178,18 @@ function saveAndUseCategory() {
 
 function showResultsScreen() {
     resultsStarterName.textContent = gameState.firstPlayer;
-    resultsImposterName.textContent = gameState.imposter;
+    
+    // Update imposter reveal text for single or multiple imposters
+    if (gameState.imposters.length === 2) {
+        const [imp1, imp2] = gameState.imposters;
+        resultsImposterName.textContent = `${imp1} and ${imp2}`;
+        imposterRevealText.innerHTML = `The Imposters were: <span class="results-imposter-name">${imp1}</span> and <span class="results-imposter-name">${imp2}</span>`;
+    } else {
+        const imposter = gameState.imposters[0];
+        resultsImposterName.textContent = imposter;
+        imposterRevealText.innerHTML = `The Imposter was: <span class="results-imposter-name">${imposter}</span>`;
+    }
+    
     imposterRevealText.classList.add('hidden');
 
     setupScreen.classList.remove('active');
@@ -231,7 +245,18 @@ function updatePlayerList() {
                 <button class="remove-btn" onclick="removePlayer(${index})">Remove</button>
             </div>
         `).join('');
-        startGameBtn.disabled = gameState.players.length < 3;
+        
+        // Update start button state based on player count and 2-imposter mode
+        const hasEnoughPlayers = gameState.players.length >= 3;
+        const twoImpostersValid = !gameState.twoImposters || gameState.players.length >= 6;
+        startGameBtn.disabled = !hasEnoughPlayers || !twoImpostersValid;
+        
+        // Show/hide warning message
+        if (gameState.twoImposters && gameState.players.length < 6) {
+            twoImpostersWarning.classList.remove('hidden');
+        } else {
+            twoImpostersWarning.classList.add('hidden');
+        }
     }
 }
 
@@ -261,6 +286,11 @@ function startGame() {
         return;
     }
 
+    if (gameState.twoImposters && gameState.players.length < 6) {
+        alert('You need at least 6 players for 2 imposters!');
+        return;
+    }
+
     if (gameState.selectedCategory === 'random') {
         const categoryNames = Object.keys(categories);
         gameState.category = getRandomItem(categoryNames);
@@ -271,12 +301,22 @@ function startGame() {
     }
 
     gameState.allowImposterFirst = imposterFirstToggle.checked;
+    gameState.twoImposters = twoImpostersToggle.checked;
 
-    gameState.imposter = getRandomItem(gameState.players);
+    // Select imposters
+    if (gameState.twoImposters) {
+        // Select 2 distinct imposters
+        const shuffled = [...gameState.players].sort(() => 0.5 - Math.random());
+        gameState.imposters = shuffled.slice(0, 2);
+    } else {
+        // Select 1 imposter
+        gameState.imposters = [getRandomItem(gameState.players)];
+    }
 
+    // Select first player (can't be an imposter unless imposterFirst is enabled)
     const eligiblePlayers = gameState.allowImposterFirst
         ? gameState.players
-        : gameState.players.filter(p => p !== gameState.imposter);
+        : gameState.players.filter(p => !gameState.imposters.includes(p));
     gameState.firstPlayer = getRandomItem(eligiblePlayers);
 
     gameState.revealedPlayers.clear();
@@ -299,7 +339,7 @@ function renderPlayerButtons() {
 }
 
 function revealRole(playerName) {
-    const isImposter = playerName === gameState.imposter;
+    const isImposter = gameState.imposters.includes(playerName);
 
     modalCategory.textContent = gameState.category;
 
@@ -374,11 +414,21 @@ function playAgainSamePlayersSameCategory() {
 
     const categoryToUse = gameState.category;
     gameState.word = getRandomItem(categories[categoryToUse]);
-    gameState.imposter = getRandomItem(gameState.players);
+    
+    // Select imposters again
+    if (gameState.twoImposters) {
+        // Select 2 distinct imposters
+        const shuffled = [...gameState.players].sort(() => 0.5 - Math.random());
+        gameState.imposters = shuffled.slice(0, 2);
+    } else {
+        // Select 1 imposter
+        gameState.imposters = [getRandomItem(gameState.players)];
+    }
 
+    // Select first player (can't be an imposter unless imposterFirst is enabled)
     const eligiblePlayers = gameState.allowImposterFirst
         ? gameState.players
-        : gameState.players.filter(p => p !== gameState.imposter);
+        : gameState.players.filter(p => !gameState.imposters.includes(p));
     gameState.firstPlayer = getRandomItem(eligiblePlayers);
 
     gameState.revealedPlayers.clear();
@@ -408,7 +458,7 @@ function resetGame() {
 }
 
 function softReset() {
-    gameState.imposter = null;
+    gameState.imposters = [];
     gameState.category = null;
     gameState.word = null;
     gameState.revealedPlayers.clear();
@@ -457,6 +507,15 @@ currentCategoryBtn.addEventListener('click', showCategoryScreen);
 
 categoryBackBtn.addEventListener('click', () => {
     showSetupScreen();
+});
+
+imposterFirstToggle.addEventListener('change', (e) => {
+    gameState.allowImposterFirst = e.target.checked;
+});
+
+twoImpostersToggle.addEventListener('change', (e) => {
+    gameState.twoImposters = e.target.checked;
+    updatePlayerList();
 });
 
 showCreateCategoryBtn.addEventListener('click', showCategoryEditorScreen);
