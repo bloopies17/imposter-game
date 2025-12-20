@@ -53,6 +53,14 @@ const cancelGameBtn = document.getElementById('cancelGameBtn');
 const startPlayerAnnouncement = document.getElementById('startPlayerAnnouncement');
 const closeStartPlayerBtn = document.getElementById('closeStartPlayerBtn');
 
+const resultsScreen = document.getElementById('resultsScreen');
+const resultsStarterName = document.getElementById('resultsStarterName');
+const revealImposterBtn = document.getElementById('revealImposterBtn');
+const imposterRevealText = document.getElementById('imposterRevealText');
+const resultsImposterName = document.getElementById('resultsImposterName');
+const resultsPlayAgainBtn = document.getElementById('resultsPlayAgainBtn');
+const resultsHomeBtn = document.getElementById('resultsHomeBtn');
+
 function loadCustomCategories() {
     const saved = localStorage.getItem('customCategories');
     if (saved) {
@@ -109,7 +117,23 @@ function showCategoryScreen() {
 function showSetupScreen() {
     categorySelectionScreen.classList.remove('active');
     gameplayScreen.classList.remove('active');
+    resultsScreen.classList.remove('active');
     setupScreen.classList.add('active');
+}
+
+function showResultsScreen() {
+    resultsStarterName.textContent = gameState.firstPlayer;
+    resultsImposterName.textContent = gameState.imposter;
+    imposterRevealText.classList.add('hidden');
+
+    setupScreen.classList.remove('active');
+    categorySelectionScreen.classList.remove('active');
+    gameplayScreen.classList.remove('active');
+    resultsScreen.classList.add('active');
+}
+
+function hideResultsScreen() {
+    resultsScreen.classList.remove('active');
 }
 
 function setSelectedCategory(categoryName) {
@@ -206,6 +230,7 @@ function startGame() {
     gameState.revealedPlayers.clear();
 
     setupScreen.classList.remove('active');
+    resultsScreen.classList.remove('active');
     gameplayScreen.classList.add('active');
 
     categoryDisplay.textContent = `Category: ${gameState.category}`;
@@ -248,7 +273,7 @@ function revealRole(playerName) {
 
         if (gameState.revealedPlayers.size === gameState.players.length) {
             setTimeout(() => {
-                announceFirstPlayer();
+                showResultsScreen();
             }, 300);
         }
     };
@@ -284,7 +309,35 @@ function resetAll() {
 
 function cancelGame() {
     // Just return to setup screen without clearing anything
+    revealModal.classList.remove('active');
+    startPlayerModal.classList.remove('active');
+    resultsScreen.classList.remove('active');
     showSetupScreen();
+}
+
+function playAgainSamePlayersSameCategory() {
+    if (!gameState.category) {
+        return;
+    }
+
+    const categoryToUse = gameState.category;
+    gameState.word = getRandomItem(categories[categoryToUse]);
+    gameState.imposter = getRandomItem(gameState.players);
+
+    const eligiblePlayers = gameState.allowImposterFirst
+        ? gameState.players
+        : gameState.players.filter(p => p !== gameState.imposter);
+    gameState.firstPlayer = getRandomItem(eligiblePlayers);
+
+    gameState.revealedPlayers.clear();
+
+    hideResultsScreen();
+    setupScreen.classList.remove('active');
+    categorySelectionScreen.classList.remove('active');
+    gameplayScreen.classList.add('active');
+
+    categoryDisplay.textContent = `Category: ${gameState.category}`;
+    renderPlayerButtons();
 }
 
 function resetGame() {
@@ -313,6 +366,7 @@ function softReset() {
     startPlayerModal.classList.remove('active');
     gameplayScreen.classList.remove('active');
     categorySelectionScreen.classList.remove('active');
+    resultsScreen.classList.remove('active');
     setupScreen.classList.add('active');
 }
 
@@ -330,13 +384,22 @@ playerNameInput.addEventListener('keypress', (e) => {
 
 startGameBtn.addEventListener('click', startGame);
 
-resetGameBtn.addEventListener('click', resetGame);
-
 closeStartPlayerBtn.addEventListener('click', () => {
     startPlayerModal.classList.remove('active');
 });
 
 playAgainBtn.addEventListener('click', softReset);
+
+revealImposterBtn.addEventListener('click', () => {
+    imposterRevealText.classList.toggle('hidden');
+});
+
+resultsPlayAgainBtn.addEventListener('click', playAgainSamePlayersSameCategory);
+
+resultsHomeBtn.addEventListener('click', () => {
+    hideResultsScreen();
+    showSetupScreen();
+});
 
 currentCategoryBtn.addEventListener('click', showCategoryScreen);
 

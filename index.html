@@ -80,6 +80,26 @@
                 <button id="cancelGameBtn" class="btn btn-danger">Cancel Game</button>
             </div>
         </div>
+
+        <div id="resultsScreen" class="screen">
+            <h2>Round Results</h2>
+
+            <div class="results-starter">
+                Round Starts With: <span id="resultsStarterName" class="results-starter-name"></span>
+            </div>
+
+            <div class="results-reveal">
+                <button id="revealImposterBtn" class="btn btn-warning">Reveal Imposter</button>
+                <div id="imposterRevealText" class="results-imposter hidden">
+                    The Imposter was: <span id="resultsImposterName"></span>
+                </div>
+            </div>
+
+            <div class="results-actions">
+                <button id="resultsPlayAgainBtn" class="btn btn-success">Play Again</button>
+                <button id="resultsHomeBtn" class="btn btn-neutral">Home</button>
+            </div>
+        </div>
     </div>
 
     <div id="revealModal" class="modal">
@@ -99,5 +119,6 @@
     </div>
 
     <script src="script.js"></script>
+    
 </body>
 </html>
