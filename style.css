@@ -4,10 +4,6 @@
     box-sizing: border-box;
 }
 
-html {
-    font-size: 50%;
-}
-
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #121212;
@@ -71,19 +67,19 @@ h2 {
 .subtitle {
     text-align: center;
     color: #888;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     font-size: 1.1rem;
 }
 
 .input-section {
     display: flex;
     gap: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 input[type="text"] {
     flex: 1;
-    padding: 12px;
+    padding: 10px;
     font-size: 1rem;
     background: #1e1e1e;
     border: 2px solid #333333;
@@ -102,16 +98,16 @@ input[type="text"]::placeholder {
 }
 
 .btn {
-    padding: 8px 16px;
-    font-size: 1.1rem;
+    padding: 6px 12px;
+    font-size: 1rem;
     font-weight: bold;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s;
     text-transform: uppercase;
     letter-spacing: 1px;
-    min-height: 48px;
+    min-height: 44px;
 }
 
 .btn-primary {
@@ -203,21 +199,23 @@ input[type="text"]::placeholder {
 .player-list {
     background: #1e1e1e;
     border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 12px;
+    margin-bottom: 15px;
     height: auto;
-    max-height: 40dvh;
+    max-height: 35vh;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .player-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 8px;
     background: #2d2d2d;
     border-radius: 6px;
-    margin-bottom: 8px;
     animation: slideIn 0.3s ease-out;
 }
 
@@ -242,14 +240,14 @@ transform: translateX(0);
 }
 
 .action-buttons {
-    margin: 15px 0;
+    margin: 10px 0;
     display: flex;
     gap: 10px;
 }
 
 .btn-category {
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     text-align: center;
 }
 
@@ -516,8 +514,8 @@ transform: translateX(0);
 .toggle-section {
     background: #1e1e1e;
     border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 10px;
+    padding: 15px;
+    margin-bottom: 8px;
 }
 
 .toggle-label {
