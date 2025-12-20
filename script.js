@@ -32,11 +32,12 @@ const currentCategoryLabel = document.getElementById('currentCategoryLabel');
 const categoryGrid = document.getElementById('categoryGrid');
 const categoryBackBtn = document.getElementById('categoryBackBtn');
 const showCreateCategoryBtn = document.getElementById('showCreateCategoryBtn');
-const categoryCreateForm = document.getElementById('categoryCreateForm');
-const newCategoryName = document.getElementById('newCategoryName');
-const newCategoryWords = document.getElementById('newCategoryWords');
-const saveNewCategoryBtn = document.getElementById('saveNewCategoryBtn');
-const cancelNewCategoryBtn = document.getElementById('cancelNewCategoryBtn');
+const categoryEditorScreen = document.getElementById('categoryEditorScreen');
+const editorCategoryName = document.getElementById('editorCategoryName');
+const editorCategoryWords = document.getElementById('editorCategoryWords');
+const categoryEditorMessage = document.getElementById('categoryEditorMessage');
+const saveAndUseCategoryBtn = document.getElementById('saveAndUseCategoryBtn');
+const cancelCategoryEditorBtn = document.getElementById('cancelCategoryEditorBtn');
 const imposterFirstToggle = document.getElementById('imposterFirstToggle');
 const startGameBtn = document.getElementById('startGameBtn');
 const categoryDisplay = document.getElementById('categoryDisplay');
@@ -103,22 +104,73 @@ function syncCurrentCategoryLabel() {
 }
 
 function showCategoryScreen() {
-    categoryCreateForm.style.display = 'none';
-    newCategoryName.value = '';
-    newCategoryWords.value = '';
-
     setupScreen.classList.remove('active');
     gameplayScreen.classList.remove('active');
+    resultsScreen.classList.remove('active');
+    categoryEditorScreen.classList.remove('active');
     categorySelectionScreen.classList.add('active');
 
     renderCategoryGrid();
+}
+
+function showCategoryEditorScreen() {
+    categoryEditorMessage.classList.add('hidden');
+    categoryEditorMessage.textContent = '';
+    editorCategoryName.value = '';
+    editorCategoryWords.value = '';
+
+    setupScreen.classList.remove('active');
+    gameplayScreen.classList.remove('active');
+    resultsScreen.classList.remove('active');
+    categorySelectionScreen.classList.remove('active');
+    categoryEditorScreen.classList.add('active');
+
+    setTimeout(() => {
+        editorCategoryName.focus();
+    }, 50);
 }
 
 function showSetupScreen() {
     categorySelectionScreen.classList.remove('active');
     gameplayScreen.classList.remove('active');
     resultsScreen.classList.remove('active');
+    categoryEditorScreen.classList.remove('active');
     setupScreen.classList.add('active');
+}
+
+function setCategoryEditorMessage(message) {
+    categoryEditorMessage.textContent = message;
+    categoryEditorMessage.classList.remove('hidden');
+}
+
+function saveAndUseCategory() {
+    const name = editorCategoryName.value.trim();
+    const wordsRaw = editorCategoryWords.value.trim();
+
+    if (!name || !wordsRaw) {
+        setCategoryEditorMessage('Please add a name and some words first!');
+        return;
+    }
+
+    if (name.toLowerCase() === 'random') {
+        setCategoryEditorMessage('Category name cannot be "Random".');
+        return;
+    }
+
+    if (defaultCategories.hasOwnProperty(name)) {
+        setCategoryEditorMessage('That category name already exists as a default category. Please choose another name.');
+        return;
+    }
+
+    const wordsArray = wordsRaw.split(',').map(w => w.trim()).filter(w => w.length > 0);
+    if (wordsArray.length < 3) {
+        setCategoryEditorMessage('Please provide at least 3 words for your custom category!');
+        return;
+    }
+
+    saveCustomCategory(name, wordsArray);
+    setSelectedCategory(name);
+    showSetupScreen();
 }
 
 function showResultsScreen() {
@@ -407,47 +459,12 @@ categoryBackBtn.addEventListener('click', () => {
     showSetupScreen();
 });
 
-showCreateCategoryBtn.addEventListener('click', () => {
-    categoryCreateForm.style.display = categoryCreateForm.style.display === 'none' ? 'block' : 'none';
-});
+showCreateCategoryBtn.addEventListener('click', showCategoryEditorScreen);
 
-cancelNewCategoryBtn.addEventListener('click', () => {
-    categoryCreateForm.style.display = 'none';
-    newCategoryName.value = '';
-    newCategoryWords.value = '';
-});
+saveAndUseCategoryBtn.addEventListener('click', saveAndUseCategory);
 
-saveNewCategoryBtn.addEventListener('click', () => {
-    const name = newCategoryName.value.trim();
-    const wordsRaw = newCategoryWords.value.trim();
-
-    if (!name || !wordsRaw) {
-        alert('Please fill in both the category name and words list for your custom category!');
-        return;
-    }
-
-    if (name.toLowerCase() === 'random') {
-        alert('Category name cannot be "Random".');
-        return;
-    }
-
-    if (defaultCategories.hasOwnProperty(name)) {
-        alert('That category name already exists as a default category. Please choose another name.');
-        return;
-    }
-
-    const wordsArray = wordsRaw.split(',').map(w => w.trim()).filter(w => w.length > 0);
-    if (wordsArray.length < 3) {
-        alert('Please provide at least 3 words for your custom category!');
-        return;
-    }
-
-    saveCustomCategory(name, wordsArray);
-    newCategoryName.value = '';
-    newCategoryWords.value = '';
-    categoryCreateForm.style.display = 'none';
-
-    renderCategoryGrid();
+cancelCategoryEditorBtn.addEventListener('click', () => {
+    showCategoryScreen();
 });
 
 loadCustomCategories();

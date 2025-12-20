@@ -58,15 +58,25 @@
 
             <div class="category-create">
                 <button id="showCreateCategoryBtn" class="btn btn-success">Create New +</button>
+            </div>
+        </div>
 
-                <div id="categoryCreateForm" class="custom-category-section" style="display: none;">
-                    <h3 class="section-title">Create Your Own Category</h3>
-                    <input type="text" id="newCategoryName" class="custom-input" placeholder="Category Name (e.g., Inside Jokes)" />
-                    <textarea id="newCategoryWords" class="custom-textarea" placeholder="Enter words separated by commas (e.g., Kevin's House, The Old Mall, That One Party)" rows="4"></textarea>
-                    <div class="form-actions">
-                        <button id="saveNewCategoryBtn" class="btn btn-primary">Save Category</button>
-                        <button id="cancelNewCategoryBtn" class="btn btn-secondary">Cancel</button>
-                    </div>
+        <div id="categoryEditorScreen" class="screen">
+            <h2 class="category-title">Create Category</h2>
+            <p class="subtitle">Add a name and a list of words</p>
+
+            <div class="category-editor-card">
+                <label class="category-editor-label" for="editorCategoryName">Category Name</label>
+                <input type="text" id="editorCategoryName" class="category-editor-input" placeholder="e.g., Marvel Characters" />
+
+                <label class="category-editor-label" for="editorCategoryWords">Words</label>
+                <textarea id="editorCategoryWords" class="category-editor-textarea" placeholder="Enter words separated by commas (e.g., Iron Man, Thor, Hulk)..." rows="6"></textarea>
+
+                <div id="categoryEditorMessage" class="category-editor-message hidden"></div>
+
+                <div class="category-editor-actions">
+                    <button id="saveAndUseCategoryBtn" class="btn btn-success">Save &amp; Use</button>
+                    <button id="cancelCategoryEditorBtn" class="btn btn-neutral">Cancel</button>
                 </div>
             </div>
         </div>

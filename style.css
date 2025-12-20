@@ -286,8 +286,83 @@ input[type="text"]::placeholder {
  }
 
  .category-create {
-     margin-top: 10px;
- }
+    margin-top: 10px;
+}
+
+.category-editor-card {
+    background: #0f3460;
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: calc(100vh - 220px);
+    overflow: auto;
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+.category-editor-label {
+    font-size: 1rem;
+    color: #e0e0e0;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.category-editor-input {
+    width: 100%;
+    padding: 15px;
+    font-size: 1rem;
+    background: #16213e;
+    border: 2px solid #16213e;
+    border-radius: 10px;
+    color: #e0e0e0;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.category-editor-input:focus {
+    border-color: #00d4ff;
+}
+
+.category-editor-textarea {
+    width: 100%;
+    padding: 15px;
+    font-size: 1rem;
+    background: #16213e;
+    border: 2px solid #16213e;
+    border-radius: 10px;
+    color: #e0e0e0;
+    outline: none;
+    transition: border-color 0.3s;
+    resize: vertical;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.5;
+    min-height: 160px;
+}
+
+.category-editor-textarea:focus {
+    border-color: #00d4ff;
+}
+
+.category-editor-message {
+    background: rgba(233, 69, 96, 0.12);
+    border: 2px solid rgba(233, 69, 96, 0.35);
+    border-radius: 12px;
+    padding: 12px;
+    color: #e0e0e0;
+    font-size: 1rem;
+}
+
+.category-editor-actions {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(15, 52, 96, 0) 0%, rgba(15, 52, 96, 1) 35%);
+    padding-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
 
  .form-actions {
      display: grid;
